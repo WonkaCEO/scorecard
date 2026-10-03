@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Bullseye Scorecard</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#16181a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Scorecard">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#f3f2ee;--fg:#16181a;--mut:#6b6f73;--card:#fff;--line:#d9d7d0;--key:#e6e4dd;--ink:#16181a;--onink:#f3f2ee;--ok:#1f7a45;--bad:#b3261e;--x:#9a6b00;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121415;--fg:#ecebe6;--mut:#8f9397;--card:#1c1f21;--line:#32363a;--key:#2a2e31;--ink:#ecebe6;--onink:#121415;--ok:#4cc27d;--bad:#ff7b72;--x:#e0b04a}}
+:root[data-theme="dark"]{--bg:#121415;--fg:#ecebe6;--mut:#8f9397;--card:#1c1f21;--line:#32363a;--key:#2a2e31;--ink:#ecebe6;--onink:#121415;--ok:#4cc27d;--bad:#ff7b72;--x:#e0b04a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.35 -apple-system,"Helvetica Neue",Arial,sans-serif;font-variant-numeric:tabular-nums;max-width:520px;margin:0 auto;padding:10px 12px 40px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+h1{font-size:19px;margin:0;letter-spacing:.2px}
+.tabs{display:flex;gap:6px}
+.tabs button{border:1px solid var(--line);background:none;color:var(--fg);padding:6px 12px;border-radius:8px;font-size:14px}
+.tabs button.on{background:var(--ink);color:var(--onink);border-color:var(--ink)}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+select,input{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 8px}
+.meta select{flex:1;min-width:0}
+.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px}
+.slot{height:50px;border-radius:50%;aspect-ratio:1;justify-self:center;width:50px;border:2px solid var(--line);background:var(--card);display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:700;color:var(--fg);padding:0}
+.slot.cur{border-color:var(--fg)}
+.slot.x{background:var(--ink);color:var(--onink);border-color:var(--ink)}
+.slot.x::after{content:"";}
+.slot.m{color:var(--bad)}
+.tot{display:flex;align-items:baseline;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:10px}
+.tot .big{font-size:44px;font-weight:800;line-height:1}
+.tot .xs{font-size:22px;color:var(--x);font-weight:700}
+.tot small{display:block;color:var(--mut);font-size:13px;font-weight:400}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.pad button{height:84px;border-radius:12px;border:none;background:var(--key);color:var(--fg);font-size:26px;font-weight:700}
+.pad button:active{transform:scale(.96)}
+.pad .kx{background:var(--ink);color:var(--onink)}
+.pad .km{color:var(--bad)}
+.pad .kb{grid-column:span 4;height:44px;font-size:16px;font-weight:600}
+.conf{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.conf.ok{border-color:var(--ok)}.conf.bad{border-color:var(--bad)}
+.conf h2{margin:0 0 8px;font-size:15px}
+.row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.row label{flex:1;font-size:13px;color:var(--mut)}
+.row input{width:100%;font-size:24px;font-weight:700;text-align:center}
+.status{font-weight:700;margin:2px 0 10px}
+.ok .status{color:var(--ok)}.bad .status{color:var(--bad)}
+.btns{display:flex;gap:8px}
+.btns button{flex:1;height:50px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:16px;font-weight:700}
+.btns .go{background:var(--ink);color:var(--onink);border-color:var(--ink)}
+.btns .go.warn{background:var(--bad);border-color:var(--bad);color:#fff}
+.sess{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.sess .h{display:flex;justify-content:space-between;font-weight:700}
+.str{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:15px}
+.str .shots{color:var(--mut);font-size:12px}
+.str button{border:none;background:none;color:var(--bad);font-size:13px;padding:6px}
+.empty{color:var(--mut);padding:30px 0;text-align:center}
+.hide{display:none!important}
+.tools{display:flex;gap:8px;margin-top:10px}
+.tools button{flex:1;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:14px}
+.mr{display:grid;grid-template-columns:.5fr 1.2fr 1fr 1fr;padding:5px 0;border-top:1px solid var(--line);font-size:15px}.mr.hd{color:var(--mut);font-size:12px;border-top:none}.gh{margin:16px 0 6px;font-size:17px}
+.tb{display:grid;grid-template-columns:.9fr 1fr 1fr 1fr 1fr;gap:4px;font-size:13px;margin-bottom:10px;text-align:center}
+.tb span{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 2px;font-weight:700}
+.tb span.full{border-color:var(--ok)}
+.tb small{display:block;color:var(--mut);font-weight:400;font-size:11px}
+.tb b{align-self:center;font-size:12px}
+textarea{width:100%;height:120px;margin-top:8px;font:12px monospace;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Bullseye scorecard</h1>
+  <div class="tabs"><button id="tScore" class="on">Score</button><button id="tMatch">Match</button><button id="tLog">Log</button></div>
+</header>
+
+<div id="vScore">
+  <div class="tabs" style="margin-bottom:8px"><button id="mMine" class="on" style="flex:1;padding:10px">My card</button><button id="mOther" style="flex:1;padding:10px">Scoring someone else</button></div>
+  <div id="banner" class="hide" style="background:var(--x);color:var(--bg);border-radius:8px;padding:8px 10px;font-weight:700;margin-bottom:8px;text-align:center">Scoring someone else: nothing is saved</div>
+  <div id="mline" style="color:var(--mut);font-size:13px;margin-bottom:8px"></div>
+  <div class="meta" id="meta">
+    <select id="stage"><option value="SF">SF Slow Fire</option><option value="NMC">NMC Natl Match Course</option><option value="TF">TF Timed Fire</option><option value="RF">RF Rapid Fire</option></select>
+    <select id="gun"><option>.22</option><option>Centerfire</option><option>.45</option></select>
+  </div>
+  <div class="slots" id="slots"></div>
+  <div class="tot"><div><span class="big" id="sum">0</span><small id="cnt">0 of 10 shots</small></div><div class="xs" id="xc">0X</div></div>
+  <div class="pad" id="pad"></div>
+
+  <div class="conf hide" id="conf">
+    <h2>Check against the target</h2>
+    <div class="status" id="status" style="font-size:36px;margin:0 0 10px"></div>
+    <label id="rfRow" style="display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:15px"><input type="checkbox" id="rf" style="width:24px;height:24px;padding:0"> Refire (scorer counted lowest 10)</label>
+    <div class="btns"><button id="redo">Clear string</button><button id="save" class="go">Save string</button></div>
+  </div>
+</div>
+
+<div id="vMatch" class="hide"></div>
+<div id="vLog" class="hide"></div>
+
+<script>
+const KEY = 'bullseye.v1';
+let shots = [];              // {v:0-10, x:bool}
+let editIdx = null;          // slot being corrected
+let log = load();
+const $ = id => document.getElementById(id);
+
+function load(){ try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch(e){ return []; } }
+function persist(){ try { localStorage.setItem(KEY, JSON.stringify(log)); } catch(e){} }
+
+// keypad
+const keys = [['X','x'],['10',10],['9',9],['8',8],['7',7],['6',6],['5',5],['M',0]];
+$('pad').innerHTML = keys.map(([l,v])=>`<button data-v="${v}" class="${l==='X'?'kx':l==='M'?'km':''}">${l}</button>`).join('') + '<button class="kb" id="back">Undo last shot</button>';
+$('pad').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  if(b.id==='back'){ if(editIdx!==null) editIdx=null; else shots.pop(); return render(); }
+  const d = b.dataset.v==='x' ? {v:10,x:true} : {v:+b.dataset.v,x:false};
+  if(editIdx!==null){ shots[editIdx]=d; editIdx=null; }
+  else if(shots.length<10) shots.push(d);
+  if(navigator.vibrate) navigator.vibrate(8);
+  render();
+  if(shots.length===10 && editIdx===null) $('conf').scrollIntoView({block:'nearest',behavior:'smooth'});
+});
+
+function calc(a){ return {t:a.reduce((s,k)=>s+k.v,0), x:a.filter(k=>k.x).length}; }
+function render(){
+  $('slots').innerHTML = Array.from({length:10},(_,i)=>{
+    const s = shots[i]; const cur = editIdx===i || (editIdx===null && i===shots.length);
+    return `<button class="slot ${cur?'cur':''} ${s&&s.x?'x':''} ${s&&s.v===0?'m':''}" data-i="${i}">${s?(s.x?'X':s.v===0?'M':s.v):''}</button>`;
+  }).join('');
+  const {t,x} = calc(shots);
+  $('sum').textContent = t; $('xc').textContent = x+'X'; $('cnt').textContent = shots.length+' of 10 shots';
+  const full = shots.length===10;
+  $('conf').classList.toggle('hide', !full);
+  if(!full){ $('rf').checked=false; }
+  check();
+}
+$('slots').addEventListener('click', e=>{
+  const b = e.target.closest('.slot'); if(!b) return;
+  const i = +b.dataset.i; if(i < shots.length) { editIdx = (editIdx===i)?null:i; render(); }
+});
+
+function check(){ if(shots.length!==10) return; const {t,x}=calc(shots); $('status').textContent=t+' - '+x+'X'; }
+$('redo').onclick = ()=>{ shots=[]; editIdx=null; render(); };
+$('save').onclick = ()=>{
+  if(other || shots.length!==10) return;
+  const {t,x} = calc(shots);
+  log.unshift({id:Date.now(), match:active||null, refire:$('rf').checked, d:new Date().toISOString(), stage:$('stage').value, gun:$('gun').value, shots:shots.map(s=>s.x?'X':s.v), t, x});
+  persist(); shots=[]; editIdx=null; render(); mline();
+  const stages=['Slow 50','Timed 25','Rapid 25'], s=$('stage'); // advance stage only after logging pairs of strings
+  window.scrollTo({top:0});
+};
+
+// tabs / log
+function tab(n){ for(const [k,v,t] of [['s','vScore','tScore'],['m','vMatch','tMatch'],['l','vLog','tLog']]){ $(v).classList.toggle('hide',n!==k); $(t).classList.toggle('on',n===k); }
+  if(n==='l') renderLog(); if(n==='m') renderMatch(); if(n==='s') mline(); }
+$('tScore').onclick=()=>tab('s'); $('tMatch').onclick=()=>tab('m'); $('tLog').onclick=()=>tab('l');
+
+const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+function csvText(){
+  const nm=id=>{const m=matches.find(x=>x.id===id);return m?m.name:'';};
+  return ['date,match,stage,gun,total,x,refire,shots'].concat(log.map(r=>[r.d.slice(0,10),q(nm(r.match)),r.stage,r.gun,r.t,r.x,!!r.refire,q(r.shots.join(' '))].join(','))).join('\n');
+}
+let armed=null;
+// Share sheet first (lets you pick OneDrive); plain download as a fallback
+const dl={ async save({filename,data}){
+  const file=new File([data],filename,{type:'text/csv'});
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file],title:filename}); return; }catch(e){ if(e&&e.name==='AbortError') return; }
+  }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([data],{type:'text/csv'})); a.download=filename;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}};
+function dayKey(iso){ return new Date(iso).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'}); }
+function renderLog(){
+  const v=$('vLog');
+  if(!log.length){ v.innerHTML='<div class="empty">No strings saved yet. Score ten shots and save.</div>'; return; }
+  const groups={}; log.forEach(r=>{ (groups[dayKey(r.d)] = groups[dayKey(r.d)]||[]).push(r); });
+  v.innerHTML = Object.entries(groups).map(([k,rs])=>{
+    const T=rs.reduce((s,r)=>s+r.t,0), X=rs.reduce((s,r)=>s+r.x,0);
+    return `<div class="sess"><div class="h"><span>${k}</span><span>${T} - ${X}X (${rs.length} str)</span></div>`+
+      rs.map(r=>`<div class="str"><div><b>${r.t}-${r.x}X</b> ${r.stage}, ${r.gun}${r.refire?' <span style="color:var(--x)">refire</span>':''}<div class="shots">${r.shots.join(' ')}</div></div><button data-del="${r.id}">Delete</button></div>`).join('')+'</div>';
+  }).join('') + '<div class="tools"><button id="dl" class="hide" style="background:var(--ink);color:var(--onink);border-color:var(--ink);font-weight:700">Share file (OneDrive)</button><button id="csv">Show CSV</button></div><div class="tools"><button id="wipe">Clear all</button></div><div id="out"></div>';
+  if(dl) $('dl').classList.remove('hide');
+}
+$('vLog').addEventListener('click', e=>{
+  const d=e.target.dataset.del;
+  if(d){ if(armed===d){ log=log.filter(r=>r.id!=d); armed=null; persist(); renderLog(); mline(); } else { armed=d; e.target.textContent='Tap again'; } return; }
+  if(e.target.id==='csv'){
+    $('out').innerHTML='<textarea readonly></textarea>'; const ta=$('out').firstChild; ta.value=csvText(); ta.select();
+  }
+  if(e.target.id==='dl' && dl){
+    dl.save({filename:'bullseye-scores-'+new Date().toISOString().slice(0,10)+'.csv', data:csvText()}).catch(err=>{ if(err && err.code!=='declined') alert('Could not save the file: '+(err.message||err.code)); });
+  }
+  if(e.target.id==='wipe'){ if(armed==='wipe'){ log=[]; armed=null; persist(); renderLog(); mline(); } else { armed='wipe'; e.target.textContent='Tap again to erase all'; } }
+});
+
+const MK='bullseye.matches.v1', AK='bullseye.active.v1';
+let matches=(()=>{try{return JSON.parse(localStorage.getItem(MK))||[];}catch(e){return [];}})();
+let active=(()=>{try{return localStorage.getItem(AK)||'';}catch(e){return '';}})();
+function pm(){ try{ localStorage.setItem(MK,JSON.stringify(matches)); localStorage.setItem(AK,active); }catch(e){} }
+const GUNS=['.22','Centerfire','.45'], STAGES=['SF','NMC','TF','RF'], CAP={SF:2,NMC:3,TF:2,RF:2}, NAMES={SF:'Slow Fire',NMC:'National Match Course',TF:'Timed Fire',RF:'Rapid Fire'};
+const mStrs=id=>log.filter(r=>r.match===id);
+const cellOf=(rs,g,s)=>{const c=rs.filter(r=>r.gun===g&&r.stage===s).slice().reverse();return{n:c.length,t:c.reduce((a,r)=>a+r.t,0),x:c.reduce((a,r)=>a+r.x,0),rows:c};};
+function nextOpen(){
+  if(!active) return null; const rs=mStrs(active);
+  for(const g of GUNS) for(const s of STAGES){ const n=cellOf(rs,g,s).n; if(n<CAP[s]){ $('gun').value=g; $('stage').value=s; return {g,s,k:n+1}; } }
+  return null;
+}
+function mline(){
+  const m=matches.find(x=>x.id===active), el=$('mline');
+  if(!m){ el.textContent='No match selected. Strings save on their own. Open Match to start a 2700.'; return; }
+  const n=mStrs(active).length, nx=nextOpen();
+  el.textContent=m.name+': '+n+' of 27 strings'+(nx?'. Next: '+nx.g+' '+nx.s+' string '+nx.k+' of '+CAP[nx.s]:'. Match complete');
+}
+const pct=(t,n)=>n?(t/(100*n)*100).toFixed(1):'';
+function matchCsv(id){
+  const m=matches.find(x=>x.id===id), rs=mStrs(id), rows=['match,gun,part,string,total,x,running_total,running_pct,refire,shots']; let GT=0,GX=0,GN=0;
+  for(const g of GUNS){ let gt=0,gx=0,gn=0;
+    for(const s of STAGES){ const c=cellOf(rs,g,s); let run=0;
+      c.rows.forEach((r,i)=>{ run+=r.t; rows.push([q(m.name),g,s,i+1,r.t,r.x,run,pct(run,i+1),!!r.refire,q(r.shots.join(' '))].join(',')); });
+      if(c.n) rows.push([q(m.name),g,s,'Match total',c.t,c.x,c.t,pct(c.t,c.n),'',''].join(','));
+      gt+=c.t; gx+=c.x; gn+=c.n; }
+    rows.push([q(m.name),g,'Aggregate','',gt,gx,gt,pct(gt,gn),'',''].join(',')); GT+=gt; GX+=gx; GN+=gn; }
+  rows.push([q(m.name),'','Grand total','',GT,GX,GT,pct(GT,GN),'',''].join(','));
+  return rows.join('\n');
+}
+function renderMatch(){
+  const v=$('vMatch'), m=matches.find(x=>x.id===active);
+  let h='<div class="sess"><div class="h"><span>Start a 2700</span></div><div class="row" style="margin-top:8px"><input id="mName" placeholder="Match name"></div><div class="btns"><button id="mNew" class="go">Start match</button></div></div>';
+  if(matches.length) h+='<div class="meta"><select id="mSel"><option value="">No match (log strings alone)</option>'+matches.map(x=>`<option value="${x.id}" ${x.id===active?'selected':''}>${x.name.replace(/</g,'&lt;')} (${x.date})</option>`).join('')+'</select></div>';
+  if(m){
+    const rs=mStrs(active); let GT=0,GX=0,GN=0,body='';
+    for(const g of GUNS){ let gt=0,gx=0,gn=0; body+=`<h3 class="gh">${g}</h3>`;
+      for(const s of STAGES){ const c=cellOf(rs,g,s); let run=0;
+        body+=`<div class="sess"><div class="h"><span>${s} ${NAMES[s]}</span><span>${c.n}/${CAP[s]}</span></div><div class="mr hd"><span>#</span><span>Score</span><span>Total</span><span>%</span></div>`;
+        c.rows.forEach((r,i)=>{ run+=r.t; body+=`<div class="mr"><span>${i+1}</span><span>${r.t}${r.x?'-'+r.x+'X':''}${r.refire?' R':''}</span><span>${run}</span><span>${pct(run,i+1)}%</span></div>`; });
+        if(!c.n) body+='<div class="mr" style="color:var(--mut)">No strings yet</div>';
+        gt+=c.t; gx+=c.x; gn+=c.n; body+='</div>'; }
+      GT+=gt; GX+=gx; GN+=gn;
+      body+=`<div class="tot"><div><span style="font-size:28px;font-weight:800">${gt}</span><small>${g} aggregate, ${gn} of 9 strings${gn?', '+pct(gt,gn)+'%':''}</small></div><div class="xs">${gx}X</div></div>`;
+    }
+    h+=`<div class="tot"><div><span class="big">${GT}</span><small>of 2700, ${GN} of 27 strings${GN?', '+pct(GT,GN)+'% of potential':''}</small></div><div class="xs">${GX}X</div></div>`;
+    h+='<div class="tools">'+(dl?'<button id="dlM" style="background:var(--ink);color:var(--onink);font-weight:700">Share 2700 file (OneDrive)</button>':'')+'<button id="csvM">Show CSV</button></div><div id="outM"></div>'+body;
+  }
+  v.innerHTML=h;
+}
+$('vMatch').addEventListener('click',e=>{
+  const id=e.target.id;
+  if(id==='mNew'){ const mm={id:'m'+Date.now(),name:$('mName').value.trim()||('Match '+new Date().toLocaleDateString()),date:new Date().toISOString().slice(0,10)}; matches.unshift(mm); active=mm.id; pm(); renderMatch(); }
+  if(id==='dlM'&&dl&&active){ const mm=matches.find(x=>x.id===active); dl.save({filename:'2700-'+mm.name.replace(/[^\w-]+/g,'-')+'-'+mm.date+'.csv',data:matchCsv(active)}).catch(err=>{ if(err&&err.code!=='declined') alert('Could not save the file: '+(err.message||err.code)); }); }
+  if(id==='csvM'){ $('outM').innerHTML='<textarea readonly></textarea>'; const ta=$('outM').firstChild; ta.value=matchCsv(active); ta.select(); }
+});
+$('vMatch').addEventListener('change',e=>{ if(e.target.id==='mSel'){ active=e.target.value; pm(); renderMatch(); } });
+
+let other=false;
+function setMode(o){
+  other=o; shots=[]; editIdx=null; $('rf').checked=false;
+  $('mMine').classList.toggle('on',!o); $('mOther').classList.toggle('on',o);
+  for(const id of ['meta','mline','rfRow','save']) $(id).classList.toggle('hide',o);
+  $('banner').classList.toggle('hide',!o);
+  $('redo').textContent=o?'Next string (not saved)':'Clear string';
+  render();
+}
+$('mMine').onclick=()=>setMode(false); $('mOther').onclick=()=>setMode(true);
+
+render(); mline();
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+if(navigator.storage && navigator.storage.persist){ navigator.storage.persist().catch(()=>{}); }
+</script>
+</body>
+</html>
