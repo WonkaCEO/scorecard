@@ -185,7 +185,7 @@ function renderLog(){
     const T=rs.reduce((s,r)=>s+r.t,0), X=rs.reduce((s,r)=>s+r.x,0);
     return `<div class="sess"><div class="h"><span>${k}</span><span>${T} - ${X}X (${rs.length} str)</span></div>`+
       rs.map(r=>`<div class="str"><div><b>${r.t}-${r.x}X</b> ${r.stage}, ${r.gun}${r.refire?' <span style="color:var(--x)">refire</span>':''}<div class="shots">${r.shots.join(' ')}</div></div><button data-del="${r.id}">Delete</button></div>`).join('')+'</div>';
-  }).join('') + '<div class="tools"><button id="dl" class="hide" style="background:var(--ink);color:var(--onink);border-color:var(--ink);font-weight:700">Share file (OneDrive)</button><button id="csv">Show CSV</button></div><div class="tools"><button id="wipe">Clear all</button></div><div id="out"></div>';
+  }).join('') + '<div class="tools"><button id="dl" class="hide" style="background:var(--ink);color:var(--onink);border-color:var(--ink);font-weight:700">Share file (OneDrive)</button><button id="csv">Show CSV</button></div><div class="tools"><button id="wipe">Clear all strings and matches</button></div><div id="out"></div>';
   if(dl) $('dl').classList.remove('hide');
 }
 $('vLog').addEventListener('click', e=>{
@@ -197,7 +197,7 @@ $('vLog').addEventListener('click', e=>{
   if(e.target.id==='dl' && dl){
     dl.save({filename:'bullseye-scores-'+new Date().toISOString().slice(0,10)+'.csv', data:csvText()}).catch(err=>{ if(err && err.code!=='declined') alert('Could not save the file: '+(err.message||err.code)); });
   }
-  if(e.target.id==='wipe'){ if(armed==='wipe'){ log=[]; armed=null; persist(); renderLog(); mline(); } else { armed='wipe'; e.target.textContent='Tap again to erase all'; } }
+  if(e.target.id==='wipe'){ if(armed==='wipe'){ log=[]; matches=[]; active=''; armed=null; persist(); pm(); renderLog(); mline(); } else { armed='wipe'; e.target.textContent='Tap again to erase all'; } }
 });
 
 const MK='bullseye.matches.v1', AK='bullseye.active.v1';
