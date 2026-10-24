@@ -18,41 +18,42 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 :root[data-theme="dark"]{--bg:#121415;--fg:#ecebe6;--mut:#8f9397;--card:#1c1f21;--line:#32363a;--key:#2a2e31;--ink:#ecebe6;--onink:#121415;--ok:#4cc27d;--bad:#ff7b72;--x:#e0b04a}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.35 -apple-system,"Helvetica Neue",Arial,sans-serif;font-variant-numeric:tabular-nums;max-width:520px;margin:0 auto;padding:10px 12px 40px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-h1{font-size:19px;margin:0;letter-spacing:.2px}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.35 -apple-system,"Helvetica Neue",Arial,sans-serif;font-variant-numeric:tabular-nums;max-width:520px;margin:0 auto;padding:8px 12px 24px;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+#vScore{display:flex;flex-direction:column;flex:1;min-height:0}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+h1{font-size:18px;margin:0;letter-spacing:.2px}
 .tabs{display:flex;gap:6px}
-.tabs button{border:1px solid var(--line);background:none;color:var(--fg);padding:6px 12px;border-radius:8px;font-size:14px}
+.tabs button{border:1px solid var(--line);background:none;color:var(--fg);padding:6px 10px;border-radius:8px;font-size:14px}
 .tabs button.on{background:var(--ink);color:var(--onink);border-color:var(--ink)}
-.meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
 select,input{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 8px}
 .meta select{flex:1;min-width:0}
-.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px}
-.slot{height:50px;border-radius:50%;aspect-ratio:1;justify-self:center;width:50px;border:2px solid var(--line);background:var(--card);display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:700;color:var(--fg);padding:0}
+.slots{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-bottom:8px}
+.slot{width:100%;aspect-ratio:1;border-radius:50%;border:2px solid var(--line);background:var(--card);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--fg);padding:0;min-width:0}
 .slot.cur{border-color:var(--fg)}
 .slot.x{background:var(--ink);color:var(--onink);border-color:var(--ink)}
 .slot.x::after{content:"";}
 .slot.m{color:var(--bad)}
-.tot{display:flex;align-items:baseline;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:10px}
-.tot .big{font-size:44px;font-weight:800;line-height:1}
+.tot{display:flex;align-items:baseline;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 12px;margin-bottom:8px}
+.tot .big{font-size:34px;font-weight:800;line-height:1}
 .tot .xs{font-size:22px;color:var(--x);font-weight:700}
 .tot small{display:block;color:var(--mut);font-size:13px;font-weight:400}
-.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
-.pad button{height:84px;border-radius:12px;border:none;background:var(--key);color:var(--fg);font-size:26px;font-weight:700}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr auto;gap:6px;margin-bottom:8px;flex:1;min-height:150px}
+.pad button{height:auto;min-height:46px;border-radius:12px;border:none;background:var(--key);color:var(--fg);font-size:26px;font-weight:700}
 .pad button:active{transform:scale(.96)}
 .pad .kx{background:var(--ink);color:var(--onink)}
 .pad .km{color:var(--bad)}
-.pad .kb{grid-column:span 4;height:44px;font-size:16px;font-weight:600}
-.conf{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.pad .kb{grid-column:span 4;height:40px;min-height:40px;font-size:16px;font-weight:600}
+.conf{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:0}
 .conf.ok{border-color:var(--ok)}.conf.bad{border-color:var(--bad)}
-.conf h2{margin:0 0 8px;font-size:15px}
+.conf h2{margin:0 0 2px;font-size:12px;color:var(--mut);font-weight:600}
 .row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
 .row label{flex:1;font-size:13px;color:var(--mut)}
 .row input{width:100%;font-size:24px;font-weight:700;text-align:center}
 .status{font-weight:700;margin:2px 0 10px}
 .ok .status{color:var(--ok)}.bad .status{color:var(--bad)}
 .btns{display:flex;gap:8px}
-.btns button{flex:1;height:50px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:16px;font-weight:700}
+.btns button{flex:1;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:16px;font-weight:700}
 .btns .go{background:var(--ink);color:var(--onink);border-color:var(--ink)}
 .btns .go.warn{background:var(--bad);border-color:var(--bad);color:#fff}
 .sess{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
@@ -75,14 +76,14 @@ textarea{width:100%;height:120px;margin-top:8px;font:12px monospace;color:var(--
 </head>
 <body>
 <header>
-  <h1>Bullseye scorecard</h1>
+  <h1>Scorecard</h1>
   <div class="tabs"><button id="tScore" class="on">Score</button><button id="tMatch">Match</button><button id="tLog">Log</button></div>
 </header>
 
 <div id="vScore">
-  <div class="tabs" style="margin-bottom:8px"><button id="mMine" class="on" style="flex:1;padding:10px">My card</button><button id="mOther" style="flex:1;padding:10px">Scoring someone else</button></div>
+  <div class="tabs" style="margin-bottom:8px"><button id="mMine" class="on" style="flex:1;padding:8px">My card</button><button id="mOther" style="flex:1;padding:8px">Scoring someone else</button></div>
   <div id="banner" class="hide" style="background:var(--x);color:var(--bg);border-radius:8px;padding:8px 10px;font-weight:700;margin-bottom:8px;text-align:center">Scoring someone else: nothing is saved</div>
-  <div id="mline" style="color:var(--mut);font-size:13px;margin-bottom:8px"></div>
+  <div id="mline" style="color:var(--mut);font-size:12px;margin-bottom:6px"></div>
   <div class="meta" id="meta">
     <select id="stage"><option value="SF">SF Slow Fire</option><option value="NMC">NMC Natl Match Course</option><option value="TF">TF Timed Fire</option><option value="RF">RF Rapid Fire</option></select>
     <select id="gun"><option>.22</option><option>Centerfire</option><option>.45</option></select>
@@ -93,8 +94,8 @@ textarea{width:100%;height:120px;margin-top:8px;font:12px monospace;color:var(--
 
   <div class="conf hide" id="conf">
     <h2>Check against the target</h2>
-    <div class="status" id="status" style="font-size:36px;margin:0 0 10px"></div>
-    <label id="rfRow" style="display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:15px"><input type="checkbox" id="rf" style="width:24px;height:24px;padding:0"> Refire (scorer counted lowest 10)</label>
+    <div class="status" id="status" style="font-size:30px;margin:0 0 4px;line-height:1.1"></div>
+    <label id="rfRow" style="display:flex;align-items:center;gap:10px;margin:0 0 6px;font-size:15px"><input type="checkbox" id="rf" style="width:24px;height:24px;padding:0"> Refire (scorer counted lowest 10)</label>
     <div class="btns"><button id="redo">Clear string</button><button id="save" class="go">Save string</button></div>
   </div>
 </div>
@@ -269,7 +270,7 @@ function setMode(o){
 $('mMine').onclick=()=>setMode(false); $('mOther').onclick=()=>setMode(true);
 
 render(); mline();
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+if('serviceWorker' in navigator){ const hadCtl=!!navigator.serviceWorker.controller; navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(hadCtl) location.reload(); }); navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 if(navigator.storage && navigator.storage.persist){ navigator.storage.persist().catch(()=>{}); }
 </script>
 </body>
