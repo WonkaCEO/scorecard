@@ -66,7 +66,7 @@ select,input{font:inherit;color:var(--fg);background:var(--card);border:1px soli
 .tools{display:flex;gap:8px;margin-top:10px}
 .tools button{flex:1;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:14px}
 .mr{display:grid;grid-template-columns:.5fr 1.2fr 1fr 1fr;padding:5px 0;border-top:1px solid var(--line);font-size:15px}.mr.hd{color:var(--mut);font-size:12px;border-top:none}.gh{margin:16px 0 6px;font-size:17px}
-.tb{display:grid;grid-template-columns:.9fr 1fr 1fr 1fr 1fr;gap:4px;font-size:13px;margin-bottom:10px;text-align:center}
+.tb{display:grid;grid-template-columns:.8fr repeat(5,1fr);gap:4px;font-size:13px;margin-bottom:10px;text-align:center}
 .tb span{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 2px;font-weight:700}
 .tb span.full{border-color:var(--ok)}
 .tb small{display:block;color:var(--mut);font-weight:400;font-size:11px}
@@ -240,7 +240,7 @@ function renderMatch(){
       for(const s of STAGES){ const c=cellOf(rs,g,s); let run=0;
         body+=`<div class="sess"><div class="h"><span>${s} ${NAMES[s]}</span><span>${c.n}/${CAP[s]}</span></div><div class="mr hd"><span>#</span><span>Score</span><span>Total</span><span>%</span></div>`;
         c.rows.forEach((r,i)=>{ run+=r.t; body+=`<div class="mr"><span>${i+1}</span><span>${r.t}${r.x?'-'+r.x+'X':''}${r.refire?' R':''}</span><span>${run}</span><span>${pct(run,i+1)}%</span></div>`; });
-        if(!c.n) body+='<div class="mr" style="color:var(--mut)">No strings yet</div>';
+        if(!c.n) body+='<div class="mr" style="color:var(--mut)">No strings yet</div>'; else body+=`<div class="mr" style="grid-template-columns:1.7fr 1fr 1fr;font-weight:700;background:var(--key);border-radius:8px;padding:7px 8px;margin-top:4px"><span>Subtotal ${c.t}-${c.x}X</span><span>${c.t}</span><span>${pct(c.t,c.n)}%</span></div>`;
         gt+=c.t; gx+=c.x; gn+=c.n; body+='</div>'; }
       GT+=gt; GX+=gx; GN+=gn;
       body+=`<div class="tot"><div><span style="font-size:28px;font-weight:800">${gt}</span><small>${g} aggregate, ${gn} of 9 strings${gn?', '+pct(gt,gn)+'%':''}</small></div><div class="xs">${gx}X</div></div>`;
