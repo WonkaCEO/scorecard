@@ -220,14 +220,17 @@ function mline(){
 }
 const pct=(t,n)=>n?(t/(100*n)*100).toFixed(1):'';
 function matchCsv(id){
-  const m=matches.find(x=>x.id===id), rs=mStrs(id), rows=['match,gun,part,string,total,x,running_total,running_pct,refire,shots']; let GT=0,GX=0,GN=0;
+  const m=matches.find(x=>x.id===id), rs=mStrs(id), rows=['match,row_type,gun,part,string,total,x,running_total,running_pct,refire,shots'];
+  const row=(t,g,p,st,tot,x,run,pc,rf,sh)=>rows.push([q(m.name),t,g,p,st,tot,x,run,pc,rf,sh].join(','));
+  const col={}; STAGES.forEach(s=>col[s]=[0,0,0]); let GT=0,GX=0,GN=0;
   for(const g of GUNS){ let gt=0,gx=0,gn=0;
     for(const s of STAGES){ const c=cellOf(rs,g,s); let run=0;
-      c.rows.forEach((r,i)=>{ run+=r.t; rows.push([q(m.name),g,s,i+1,r.t,r.x,run,pct(run,i+1),!!r.refire,q(r.shots.join(' '))].join(',')); });
-      if(c.n) rows.push([q(m.name),g,s,'Match total',c.t,c.x,c.t,pct(c.t,c.n),'',''].join(','));
-      gt+=c.t; gx+=c.x; gn+=c.n; }
-    rows.push([q(m.name),g,'Aggregate','',gt,gx,gt,pct(gt,gn),'',''].join(',')); GT+=gt; GX+=gx; GN+=gn; }
-  rows.push([q(m.name),'','Grand total','',GT,GX,GT,pct(GT,GN),'',''].join(','));
+      c.rows.forEach((r,i)=>{ run+=r.t; row('string',g,s,i+1,r.t,r.x,run,pct(run,i+1),!!r.refire,q(r.shots.join(' '))); });
+      if(c.n) row('course_total',g,s,'',c.t,c.x,c.t,pct(c.t,c.n),'','');
+      gt+=c.t; gx+=c.x; gn+=c.n; col[s][0]+=c.t; col[s][1]+=c.x; col[s][2]+=c.n; }
+    row('gun_total',g,'','',gt,gx,gt,pct(gt,gn),'',''); GT+=gt; GX+=gx; GN+=gn; }
+  for(const s of STAGES){ const c=col[s]; if(c[2]) row('course_all_guns','All',s,'',c[0],c[1],c[0],pct(c[0],c[2]),'',''); }
+  row('grand_total','All','','',GT,GX,GT,pct(GT,GN),'','');
   return rows.join('\n');
 }
 function renderMatch(){
